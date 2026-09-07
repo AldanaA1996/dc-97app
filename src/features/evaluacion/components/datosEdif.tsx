@@ -172,7 +172,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "catOcupacion",
-                valor
+                valor ?? ""
               )
             }
           >
@@ -292,7 +292,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "condMantenimiento",
-                valor
+                valor ?? ""
               )
             }
           >
@@ -327,7 +327,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "condEdif",
-                valor
+                valor ?? ""
               )
             }
           >

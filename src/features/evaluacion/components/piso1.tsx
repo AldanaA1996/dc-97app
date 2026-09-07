@@ -576,7 +576,7 @@ export default function PisoForm({
 
                               elemento,
 
-                              valor
+                              valor ?? ""
 
                             )
 
@@ -757,7 +757,7 @@ export default function PisoForm({
 
                               {
                                 condicion:
-                                  valor,
+                                  valor ?? "",
                               }
 
                             )

@@ -365,7 +365,7 @@ export default function EdificioForm({
 
                           seleccionarComponente(
                             elemento,
-                            valor
+                            valor ?? ""
                           )
 
                         }
@@ -528,7 +528,7 @@ export default function EdificioForm({
                           actualizarFila(
                             elemento.numero,
                             {
-                              condicion: valor,
+                              condicion: valor ?? "",
                             }
                           )
 

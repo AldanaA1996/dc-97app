@@ -65,10 +65,12 @@ export default function TopBar() {
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Abrir menú">
+        <SheetTrigger
+          render={
+            <Button variant="ghost" size="icon" aria-label="Abrir menú" />
+          }
+        >
             <Menu className="size-5" />
-          </Button>
         </SheetTrigger>
 
         <SheetContent side="left" className="w-72">
@@ -81,8 +83,10 @@ export default function TopBar() {
               const activo = pathname === href;
 
               return (
-                <SheetClose asChild key={label}>
-                  <Link
+                <SheetClose
+                  key={label}
+                  render={
+                    <Link
                     href={href}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
@@ -90,10 +94,11 @@ export default function TopBar() {
                         ? "bg-accent text-foreground"
                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     )}
-                  >
-                    <Icon className="size-5" aria-hidden="true" />
-                    {label}
-                  </Link>
+                    />
+                  }
+                >
+                  <Icon className="size-5" aria-hidden="true" />
+                  {label}
                 </SheetClose>
               );
             })}
