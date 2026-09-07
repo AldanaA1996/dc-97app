@@ -1,6 +1,6 @@
 // src/pdf/dibujarTabla.ts
 import { PDFDocument, PDFPage, PDFFont, rgb } from "pdf-lib";
-import { CONFIG_PDF } from "./layout";
+import { ALTO_FILA, FUENTES, PAGINA_DC97 } from "./layout";
 
 export interface ColumnaTabla {
   label: string;
@@ -20,7 +20,13 @@ interface EstadoDibujo {
   y: number;
 }
 
-const { margen, anchoPagina, altoPagina, fuenteTabla, fuenteLabel, altoFilaTabla, altoFilaHeader } = CONFIG_PDF;
+const margen = 36;
+const anchoPagina = PAGINA_DC97.ancho;
+const altoPagina = PAGINA_DC97.alto;
+const fuenteTabla = FUENTES.tablaTexto;
+const fuenteLabel = FUENTES.tablaHeader;
+const altoFilaTabla = ALTO_FILA;
+const altoFilaHeader = 12;
 const anchoContenido = anchoPagina - margen * 2;
 
 function nuevaPagina(doc: PDFDocument): PDFPage {

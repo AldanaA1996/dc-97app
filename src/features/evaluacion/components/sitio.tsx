@@ -2,7 +2,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { catalogoCostos, Elemento } from "@/src/data/elementosSitio";
+import { catalogoCostos, Elemento } from "@/src/features/evaluacion/data/elementosSitio";
 import {
   Select,
   SelectTrigger,
@@ -13,8 +13,8 @@ import {
 } from "@/src/components/ui/select";
 import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
-import { useEvaluacion } from "../../context/evaluacion-context";
-import { FilaElemento, filaVacia } from "../../types/evaluacion";
+import { useEvaluacion } from "@/src/context/evaluacion-context";
+import { FilaElemento, filaVacia } from "@/src/features/evaluacion/types";
 import { useState } from "react";
 
 const condicion = [
@@ -44,7 +44,13 @@ export default function SitioForm() {
   function toggleExpandido(numero: number) {
     setExpandidos((prev) => {
       const next = new Set(prev);
-      next.has(numero) ? next.delete(numero) : next.add(numero);
+
+      if (next.has(numero)) {
+        next.delete(numero);
+      } else {
+        next.add(numero);
+      }
+
       return next;
     });
   }
