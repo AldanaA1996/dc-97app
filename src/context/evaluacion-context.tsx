@@ -17,9 +17,7 @@ import {
   datosEdificioVacio,
 } from "../types/evaluacion";
 
-
 const STORAGE_KEY = "evaluacion-en-progreso";
-
 
 interface EstadoEvaluacion {
   datosGenerales: DatosGenerales;
@@ -27,77 +25,48 @@ interface EstadoEvaluacion {
   edificios: EdificioEvaluacion[];
 }
 
-
 const estadoVacio: EstadoEvaluacion = {
   datosGenerales: datosGeneralesVacio,
   sitio: {},
   edificios: [],
 };
 
-
 interface EvaluacionContextValue extends EstadoEvaluacion {
+  setDatosGenerales: (datos: DatosGenerales) => void;
 
-  setDatosGenerales: (
-    datos: DatosGenerales
-  ) => void;
+  setSitio: (datos: DatosSeccion) => void;
 
-  setSitio: (
-    datos: DatosSeccion
-  ) => void;
-
-
-  sincronizarEdificios: (
-    cantidad: number
-  ) => void;
-
+  sincronizarEdificios: (cantidad: number) => void;
 
   actualizarDatosEdificio: (
     edificioId: number,
-    cambios: Partial<DatosEdificio>
+    cambios: Partial<DatosEdificio>,
   ) => void;
 
+  sincronizarPisos: (edificioId: number, cantidad: number) => void;
 
-  sincronizarPisos: (
-    edificioId: number,
-    cantidad: number
-  ) => void;
-
-
-  setEvaluacionEdificio: (
-    edificioId: number,
-    datos: DatosSeccion
-  ) => void;
-
+  setEvaluacionEdificio: (edificioId: number, datos: DatosSeccion) => void;
 
   setEvaluacionPiso: (
     edificioId: number,
     pisoId: number,
-    datos: DatosSeccion
+    datos: DatosSeccion,
   ) => void;
-
 
   limpiarTodo: () => void;
 
   cargado: boolean;
 }
 
-
-const EvaluacionContext =
-  createContext<EvaluacionContextValue | null>(
-    null
-  );
-
+const EvaluacionContext = createContext<EvaluacionContextValue | null>(null);
 
 function cargarDesdeStorage(): EstadoEvaluacion {
-
   if (typeof window === "undefined") {
     return estadoVacio;
   }
 
   try {
-
-    const guardado =
-      window.localStorage.getItem(STORAGE_KEY);
+    const guardado = window.localStorage.getItem(STORAGE_KEY);
 
     if (!guardado) {
       return estadoVacio;
@@ -107,457 +76,263 @@ function cargarDesdeStorage(): EstadoEvaluacion {
       ...estadoVacio,
       ...JSON.parse(guardado),
     };
-
   } catch {
-
     return estadoVacio;
-
   }
-
 }
 
+export function EvaluacionProvider({ children }: { children: ReactNode }) {
+  const [estado, setEstado] = useState<EstadoEvaluacion>(estadoVacio);
+  const [cargado, setCargado] = useState(false);
 
-export function EvaluacionProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+ useEffect(() => {
+  setEstado(cargarDesdeStorage());
+  setCargado(true);
+ }, []);
 
-  const [estado, setEstado] =
-    useState<EstadoEvaluacion>(() =>
-      cargarDesdeStorage()
+ useEffect(() => {
+  if (!cargado) return;
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(estado)
     );
+  } catch (error) {
+    console.error("No se pudo guardar en localStorage:", error);
+  }
+ }, [estado, cargado]);
 
-
-  const [cargado] = useState(true);
-
-
-  useEffect(() => {
-
-    if (typeof window === "undefined") return;
-
-    try {
-
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(estado)
-      );
-
-    } catch (error) {
-
-      console.error(
-        "No se pudo guardar en localStorage:",
-        error
-      );
-
-    }
-
-  }, [estado, cargado]);
-
-
-  function sincronizarEdificios(
-    cantidad: number
-  ) {
-
-    const cantidadValida =
-      Math.max(0, cantidad);
-
+  function sincronizarEdificios(cantidad: number) {
+    const cantidadValida = Math.max(0, cantidad);
 
     setEstado((prev) => {
+      const nuevosEdificios = Array.from(
+        { length: cantidadValida },
+        (_, index) => {
+          const id = index + 1;
 
-      const nuevosEdificios =
-        Array.from(
-          { length: cantidadValida },
-          (_, index) => {
+          const edificioExistente = prev.edificios.find(
+            (edificio) => edificio.id === id,
+          );
 
-            const id = index + 1;
+          return (
+            edificioExistente ?? {
+              id,
 
+              datos: {
+                ...datosEdificioVacio,
+              },
 
-            const edificioExistente =
-              prev.edificios.find(
-                (edificio) =>
-                  edificio.id === id
-              );
+              evaluacion: {},
 
-
-            return (
-              edificioExistente ?? {
-
-                id,
-
-                datos: {
-                  ...datosEdificioVacio,
+              pisos: [
+                {
+                  id: 1,
+                  evaluacion: {},
                 },
-
-                evaluacion: {},
-
-                pisos: [
-                  {
-                    id: 1,
-                    evaluacion: {},
-                  },
-                ],
-
-              }
-            );
-
-          }
-        );
-
+              ],
+            }
+          );
+        },
+      );
 
       return {
-
         ...prev,
 
         datosGenerales: {
-
           ...prev.datosGenerales,
 
-          numeroEdificios:
-            cantidadValida,
-
+          numeroEdificios: cantidadValida,
         },
 
-        edificios:
-          nuevosEdificios,
-
+        edificios: nuevosEdificios,
       };
-
     });
-
   }
-
 
   function actualizarDatosEdificio(
-
     edificioId: number,
 
-    cambios: Partial<DatosEdificio>
-
+    cambios: Partial<DatosEdificio>,
   ) {
-
     setEstado((prev) => ({
-
       ...prev,
 
-      edificios:
-        prev.edificios.map(
-          (edificio) =>
-
-            edificio.id === edificioId
-
-              ? {
-
-                  ...edificio,
-
-                  datos: {
-
-                    ...edificio.datos,
-
-                    ...cambios,
-
-                  },
-
-                }
-
-              : edificio
-        ),
-
-    }));
-
-  }
-
-
-  function sincronizarPisos(
-
-    edificioId: number,
-
-    cantidad: number
-
-  ) {
-
-    const cantidadValida =
-      Math.max(1, cantidad);
-
-
-    setEstado((prev) => ({
-
-      ...prev,
-
-      edificios:
-        prev.edificios.map(
-          (edificio) => {
-
-            if (
-              edificio.id !== edificioId
-            ) {
-              return edificio;
-            }
-
-
-            const nuevosPisos =
-              Array.from(
-                {
-                  length:
-                    cantidadValida,
-                },
-
-                (_, index) => {
-
-                  const id =
-                    index + 1;
-
-
-                  const pisoExistente =
-                    edificio.pisos.find(
-                      (piso) =>
-                        piso.id === id
-                    );
-
-
-                  return (
-
-                    pisoExistente ?? {
-
-                      id,
-
-                      evaluacion: {},
-
-                    }
-
-                  );
-
-                }
-              );
-
-
-            return {
-
+      edificios: prev.edificios.map((edificio) =>
+        edificio.id === edificioId
+          ? {
               ...edificio,
 
               datos: {
-
                 ...edificio.datos,
 
-                numPisos:
-                  cantidadValida,
-
+                ...cambios,
               },
-
-              pisos:
-                nuevosPisos,
-
-            };
-
-          }
-        ),
-
+            }
+          : edificio,
+      ),
     }));
-
   }
 
-
-  function setEvaluacionEdificio(
-
+  function sincronizarPisos(
     edificioId: number,
 
-    datos: DatosSeccion
-
+    cantidad: number,
   ) {
+    const cantidadValida = Math.max(1, cantidad);
 
     setEstado((prev) => ({
-
       ...prev,
 
-      edificios:
-        prev.edificios.map(
-          (edificio) =>
+      edificios: prev.edificios.map((edificio) => {
+        if (edificio.id !== edificioId) {
+          return edificio;
+        }
 
-            edificio.id === edificioId
+        const nuevosPisos = Array.from(
+          {
+            length: cantidadValida,
+          },
 
-              ? {
+          (_, index) => {
+            const id = index + 1;
 
-                  ...edificio,
+            const pisoExistente = edificio.pisos.find((piso) => piso.id === id);
 
-                  evaluacion:
-                    datos,
+            return (
+              pisoExistente ?? {
+                id,
 
-                }
+                evaluacion: {},
+              }
+            );
+          },
+        );
 
-              : edificio
-        ),
+        return {
+          ...edificio,
 
+          datos: {
+            ...edificio.datos,
+
+            numPisos: cantidadValida,
+          },
+
+          pisos: nuevosPisos,
+        };
+      }),
     }));
-
   }
 
+  function setEvaluacionEdificio(
+    edificioId: number,
+
+    datos: DatosSeccion,
+  ) {
+    setEstado((prev) => ({
+      ...prev,
+
+      edificios: prev.edificios.map((edificio) =>
+        edificio.id === edificioId
+          ? {
+              ...edificio,
+
+              evaluacion: datos,
+            }
+          : edificio,
+      ),
+    }));
+  }
 
   function setEvaluacionPiso(
-
     edificioId: number,
 
     pisoId: number,
 
-    datos: DatosSeccion
-
+    datos: DatosSeccion,
   ) {
-
     setEstado((prev) => ({
-
       ...prev,
 
-      edificios:
-        prev.edificios.map(
-          (edificio) => {
+      edificios: prev.edificios.map((edificio) => {
+        if (edificio.id !== edificioId) {
+          return edificio;
+        }
 
-            if (
-              edificio.id !== edificioId
-            ) {
-              return edificio;
-            }
+        return {
+          ...edificio,
 
+          pisos: edificio.pisos.map((piso) =>
+            piso.id === pisoId
+              ? {
+                  ...piso,
 
-            return {
-
-              ...edificio,
-
-              pisos:
-                edificio.pisos.map(
-                  (piso) =>
-
-                    piso.id === pisoId
-
-                      ? {
-
-                          ...piso,
-
-                          evaluacion:
-                            datos,
-
-                        }
-
-                      : piso
-                ),
-
-            };
-
-          }
-        ),
-
+                  evaluacion: datos,
+                }
+              : piso,
+          ),
+        };
+      }),
     }));
-
   }
-
 
   function limpiarTodo() {
-
-    setEstado(
-      estadoVacio
-    );
+    setEstado(estadoVacio);
 
     try {
-
-      window.localStorage.removeItem(
-        STORAGE_KEY
-      );
-
+      window.localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-
-      console.error(
-        "No se pudo limpiar localStorage:",
-        error
-      );
-
+      console.error("No se pudo limpiar localStorage:", error);
     }
-
   }
 
-
   return (
-
     <EvaluacionContext.Provider
-
       value={{
-
         ...estado,
 
-
-        setDatosGenerales: (
-          datosGenerales
-        ) =>
-
+        setDatosGenerales: (datosGenerales) =>
           setEstado((prev) => ({
-
             ...prev,
 
             datosGenerales,
-
           })),
 
-
-        setSitio: (
-          sitio
-        ) =>
-
+        setSitio: (sitio) =>
           setEstado((prev) => ({
-
             ...prev,
 
             sitio,
-
           })),
-
 
         sincronizarEdificios,
 
-
         actualizarDatosEdificio,
-
 
         sincronizarPisos,
 
-
         setEvaluacionEdificio,
-
 
         setEvaluacionPiso,
 
-
         limpiarTodo,
 
-
         cargado,
-
       }}
-
     >
-
       {children}
-
     </EvaluacionContext.Provider>
-
   );
-
 }
 
-
 export function useEvaluacion() {
-
-  const ctx =
-    useContext(
-      EvaluacionContext
-    );
-
+  const ctx = useContext(EvaluacionContext);
 
   if (!ctx) {
-
-    throw new Error(
-      "useEvaluacion debe usarse dentro de EvaluacionProvider"
-    );
-
+    throw new Error("useEvaluacion debe usarse dentro de EvaluacionProvider");
   }
 
-
   return ctx;
-
 }

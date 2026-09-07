@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 import {
   catalogoCostos,
   Elemento,
-} from "@/src/data/elementosEdif";
+} from "@/src/features/evaluacion/data/elementosEdif";
 
 import {
   Select,
@@ -30,13 +30,13 @@ import {
 
 import {
   useEvaluacion,
-} from "../../context/evaluacion-context";
+} from "@/src/context/evaluacion-context";
 
 import {
   FilaElemento,
   filaVacia,
   DatosSeccion,
-} from "../../types/evaluacion";
+} from "@/src/features/evaluacion/types";
 
 
 interface EdificioFormProps {

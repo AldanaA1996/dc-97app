@@ -8,11 +8,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Field, FieldGroup, FieldLabel } from "../ui/field";
-import { useEvaluacion } from "../../context/evaluacion-context";
+} from "@/src/components/ui/select";
+import { Input } from "@/src/components/ui/input";
+import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
+import { useEvaluacion } from "@/src/context/evaluacion-context";
 
 const unidadesM = [
   { label: "Metrico", value: "Metrico" },
@@ -121,6 +120,27 @@ export default function Datos() {
           </Field>
         </div>
       </FieldGroup>
+
+       {/* direccion del sitio */}
+      <Field>
+        <FieldLabel htmlFor="direccion">
+          Dirección
+          <span className="text-destructive">*</span>
+        </FieldLabel>
+
+        <Input
+          type="text"
+          id="direccion"
+          placeholder="Ingrese la dirección"
+          value={datosGenerales.direccionSitio ?? ""}
+          onChange={(e) =>
+            actualizarDatos({
+              direccionSitio: e.target.value,
+            })
+          }
+          required
+        />
+      </Field>
 
       {/* Oficina */}
       <Field>
