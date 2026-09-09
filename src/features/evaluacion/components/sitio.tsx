@@ -116,7 +116,7 @@ export default function SitioForm() {
                     <Select
                       value={fila.componente}
                       onValueChange={(valor) =>
-                        seleccionarComponente(elemento, valor)
+                        seleccionarComponente(elemento, valor ?? "")
                       }
                     >
                       <SelectTrigger>
@@ -166,7 +166,7 @@ export default function SitioForm() {
                     <Select
                       value={fila.condicion}
                       onValueChange={(valor) =>
-                        actualizarFila(elemento.numero, { condicion: valor })
+                        actualizarFila(elemento.numero, { condicion: valor ?? "" })
                       }
                     >
                       <SelectTrigger>

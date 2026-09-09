@@ -17,19 +17,19 @@ import {
 import { useEvaluacion } from "@/src/context/evaluacion-context";
 
 interface BottomBarProps {
-  onAtras: () => void;
-  onSiguiente: () => void;
-  onExportar: () => void;
-  deshabilitarAtras: boolean;
-  deshabilitarSiguiente: boolean;
+  onAtras?: () => void;
+  onSiguiente?: () => void;
+  onExportar?: () => void;
+  deshabilitarAtras?: boolean;
+  deshabilitarSiguiente?: boolean;
 }
 
 export default function BottomBar({
-  onAtras,
-  onSiguiente,
-  onExportar,
-  deshabilitarAtras,
-  deshabilitarSiguiente,
+  onAtras = () => undefined,
+  onSiguiente = () => undefined,
+  onExportar = () => undefined,
+  deshabilitarAtras = false,
+  deshabilitarSiguiente = false,
 }: BottomBarProps) {
   const { limpiarTodo } = useEvaluacion();
 
@@ -51,15 +51,17 @@ export default function BottomBar({
         </Button>
 
         <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
+          <AlertDialogTrigger
+            render={
+              <Button
               type="button"
               variant="ghost"
               size="icon"
               aria-label="Limpiar formulario"
-            >
-              <Trash2 className="size-5" />
-            </Button>
+              />
+            }
+          >
+            <Trash2 className="size-5" />
           </AlertDialogTrigger>
 
           <AlertDialogContent>
