@@ -1,7 +1,7 @@
 "use client";
 
 import { useEvaluacion } from "@/src/context/evaluacion-context";
-import DatosEdifForm from "@/src/components/forms/datosEdif";
+import DatosEdifForm from "@/src/features/evaluacion/components/datosEdif";
 
 export default function DatosEdificios() {
   const { edificios, cargado } = useEvaluacion();

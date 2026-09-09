@@ -7,17 +7,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/src/components/ui/select";
 
-import { Input } from "../ui/input";
+import { Input } from "@/src/components/ui/input";
 
 import {
   Field,
-  FieldGroup,
   FieldLabel,
-} from "../ui/field";
+} from "@/src/components/ui/field";
 
-import { useEvaluacion } from "../../context/evaluacion-context";
+import { useEvaluacion } from "@/src/context/evaluacion-context";
 
 interface DatosEdifFormProps {
   edificioId: number;
@@ -173,7 +172,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "catOcupacion",
-                valor
+                valor ?? ""
               )
             }
           >
@@ -293,7 +292,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "condMantenimiento",
-                valor
+                valor ?? ""
               )
             }
           >
@@ -328,7 +327,7 @@ export default function DatosEdifForm({
             onValueChange={(valor) =>
               actualizarCampo(
                 "condEdif",
-                valor
+                valor ?? ""
               )
             }
           >

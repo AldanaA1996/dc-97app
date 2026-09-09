@@ -11,7 +11,7 @@ import {
 import {
   catalogoCostos,
   Elemento,
-} from "@/src/data/elementosPiso";
+} from "@/src/features/evaluacion/data/elementosPiso";
 
 import {
   Select,
@@ -34,13 +34,13 @@ import {
 
 import {
   useEvaluacion,
-} from "../../context/evaluacion-context";
+} from "@/src/context/evaluacion-context";
 
 import {
   FilaElemento,
   filaVacia,
   DatosSeccion,
-} from "../../types/evaluacion";
+} from "@/src/features/evaluacion/types";
 
 
 interface PisoFormProps {
@@ -576,7 +576,7 @@ export default function PisoForm({
 
                               elemento,
 
-                              valor
+                              valor ?? ""
 
                             )
 
@@ -757,7 +757,7 @@ export default function PisoForm({
 
                               {
                                 condicion:
-                                  valor,
+                                  valor ?? "",
                               }
 
                             )

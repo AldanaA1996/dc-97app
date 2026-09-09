@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# dc-97app
 
-## Getting Started
+Aplicación construida con Next.js para gestionar una evaluación y generación de documentos relacionados con costos y elementos del proyecto.
 
-First, run the development server:
+## Requerimientos
+
+- Node.js 20+
+- pnpm
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
+pnpm build
+pnpm lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Acceso
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La aplicación incluye un bloqueo básico sin base de datos. Copia `.env.example` a `.env.local` y define `LOGIN_PASSWORD` antes de iniciar el servidor.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Organización recomendada
 
-## Learn More
+La estructura actual ya tiene una buena base, pero conviene separar mejor el dominio de la UI y la lógica de negocio.
 
-To learn more about Next.js, take a look at the following resources:
+```text
+src/
+├── app/                 # rutas y layouts de Next.js
+├── components/          # ui reutilizable y layout
+├── context/             # providers globales
+├── data/                # catalogos y datos base
+├── features/
+│   └── evaluacion/     # lógica y componentes del flujo principal
+├── hooks/               # hooks compartidos
+├── lib/                 # helpers
+├── pdf/                 # generación de PDFs
+├── store/               # estado global
+├── types/               # tipos del proyecto
+└── ...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Para una guía más detallada, revisa [docs/estructura-proyecto.md](docs/estructura-proyecto.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Sugerencia de migración
 
-## Deploy on Vercel
+1. Mover los formularios de evaluación a `src/features/evaluacion/components`.
+2. Separar la lógica de validación y cálculos en `src/features/evaluacion/lib`.
+3. Mantener `src/components/ui` como biblioteca visual reusable.
+4. Usar rutas absolutas con `@/src/...` para evitar imports relativos largos.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Estado del proyecto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El proyecto está funcional y la base de la app ya está montada. El siguiente paso recomendado es consolidar la estructura de feature para que crezca sin mezclar responsabilidades.
